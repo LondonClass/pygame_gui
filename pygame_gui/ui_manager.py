@@ -20,7 +20,7 @@ from pygame_gui.core.layered_gui_group import LayeredGUIGroup
 from pygame_gui.core import ObjectID
 
 from pygame_gui.elements import UITooltip
-
+from pygame_gui.debug_interface import DebugWindow
 
 class UIManager(IUIManagerInterface):
     """
@@ -40,7 +40,8 @@ class UIManager(IUIManagerInterface):
                  enable_live_theme_updates: bool = True,
                  resource_loader: Optional[IResourceLoader] = None,
                  starting_language: str = 'en',
-                 translation_directory_paths: Optional[List[str]] = None):
+                 translation_directory_paths: Optional[List[str]] = None,
+                 debug: bool = False):
 
         if get_default_manager() is None:
             set_default_manager(self)
@@ -105,6 +106,12 @@ class UIManager(IUIManagerInterface):
             self.resource_loader.start()
             # If we are using a blocking loader this will only return when loading is complete
             self.resource_loader.update()
+            
+        self.debug_window = None
+        if debug:
+            self.debug_window = DebugWindow(pygame.Rect((self.window_resolution[0] * 0.2, self.window_resolution[1] * 0.2),
+                                                        (self.window_resolution[0] * 0.6, self.window_resolution[1] * 0.6)),
+                                            self)
         
     def create_new_theme(self, theme_path: Union[str, os.PathLike, io.StringIO, PackageResource, dict]=None) -> UIAppearanceTheme:
         """
